@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>EDITAR PELICULA</h1>
+
+    <% function buscarError(name){
+        //console.log("buscarError");
+        if(typeof errors != 'undefined'){
+              let error = errors.filter(function(error){
+                 return error.param == name;
+              });
+              //console.log(errors);
+              if(error.length == 0){
+                 let error = [{
+                 value: '',
+                 msg: '',
+                 param: '',
+                 location: ''
+              }
+              ];
+              //console.log(error);
+              return error;
+              }
+              return error;
+        }else{
+              let error = [{
+                 value: '',
+                 msg: '',
+                 param: '',
+                 location: ''
+              }
+              ];
+              //console.log(error);
+              return error;
+        }
+     }
+     %>
+
+
+    <form action="/movies/edit/<%= id %>?_method=PUT" method="POST">
+
+        <label for="">Titulo</label>
+        <input type="text" name="title" value="<%= (typeof datos != 'undefined') ? datos.title : pelicula.title  %>">
+        <span style="color: red;font-size: 12px;"><%= buscarError('title')[0].msg %></span>
+        <br>
+        <br>
+        <label for="">Rating</label>
+        <input type="text" name="rating" value="<%= (typeof datos != 'undefined') ? datos.rating : pelicula.rating  %>">
+        <span style="color: red;font-size: 12px;"><%= buscarError('rating')[0].msg %></span>
+        <br>
+        <br>
+        <label for="">Premios</label>
+        <input type="text" name="awards" value="<%= (typeof datos != 'undefined') ? datos.awards : pelicula.awards  %>">
+        <span style="color: red;font-size: 12px;"><%= buscarError('awards')[0].msg %></span>
+        <br>
+        <br>
+        <label for="">Duracion</label>
+        <input type="text" name="length" value="<%= (typeof datos != 'undefined') ? datos.length : pelicula.length  %>">
+        <span style="color: red;font-size: 12px;"><%= buscarError('length')[0].msg %></span>
+        <br>
+        <br>
+
+        <button type="submit">EDITAR</button>
+
+
+    </form>
+</body>
+
+</html>
