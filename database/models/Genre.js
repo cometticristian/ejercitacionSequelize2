@@ -1,6 +1,6 @@
 module.exports = (sequelize, dataTypes) => {
 
-    let alias = "Genres";
+    let alias = "Genre";
     let cols = {
         id: {
             type: dataTypes.INTEGER,
@@ -14,6 +14,14 @@ module.exports = (sequelize, dataTypes) => {
         ranking: {
             type: dataTypes.INTEGER,
             allowNull: true
+        },
+        created_at: {
+            type: dataTypes.DATE,
+            allowNull: true
+        },
+        active: {
+            type: dataTypes.INTEGER,
+            allowNull: true
         }
     };
     let config = {
@@ -22,6 +30,13 @@ module.exports = (sequelize, dataTypes) => {
     }
 
     const Genre = sequelize.define(alias, cols, config);
+
+    Genre.associate = function (models) {
+        Genre.hasMany(models.Movie, {
+            as: 'movies',
+            foreignKey: 'genre_id'
+        })
+    }
 
     return Genre;
 }

@@ -4,7 +4,7 @@ const sequelize = db.sequelize;
 
 let moviesController = {
     list: function (req, res, next) {
-        db.Movies.findAll()
+        db.Movie.findAll()
             .then((peliculas) => {
                 res.render('list', { peliculas: peliculas });
             })
@@ -13,7 +13,9 @@ let moviesController = {
             })
     },
     detail: function (req, res, next) {
-        db.Movies.findByPk(req.params.id)
+        db.Movie.findByPk(req.params.id, {
+            include: [{association: 'genre'}, {association: 'actors'}]
+        })
             .then((pelicula) => {
                 res.render('detail', { pelicula: pelicula })
             })
@@ -27,7 +29,7 @@ let moviesController = {
     store: function (req, res, next) {
         let errors = validationResult(req);
         if (errors.isEmpty()) {
-            db.Movies.create(req.body)
+            db.Movie.create(req.body)
                 .then(() => {
                     res.redirect('list');
                 })
@@ -39,7 +41,7 @@ let moviesController = {
         }
     },
     edit: function (req, res, next) {
-        db.Movies.findByPk(req.params.id)
+        db.Movie.findByPk(req.params.id)
             .then((pelicula) => {
                 res.render('edit', { pelicula: pelicula, id: req.params.id })
             })
@@ -50,7 +52,7 @@ let moviesController = {
     update: function (req, res, next) {
         let errors = validationResult(req);
         if (errors.isEmpty()) {
-            db.Movies.update({
+            db.Movie.update({
                 title: req.body.title,
                 rating: req.body.rating,
                 awards: req.body.awards,
@@ -71,7 +73,7 @@ let moviesController = {
         }
     },
     destroy: function (req, res, next) {
-        db.Movies.destroy({
+        db.Movie.destroy({
             where: {
                 id: req.params.id
             }

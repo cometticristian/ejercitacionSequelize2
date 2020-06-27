@@ -1,6 +1,6 @@
 module.exports = (sequelize, dataTypes) => {
 
-    let alias = "Movies";
+    let alias = "Movie";
     let cols = {
         id: {
             type: dataTypes.INTEGER,
@@ -25,6 +25,10 @@ module.exports = (sequelize, dataTypes) => {
         },
         release_date: {
             type: dataTypes.DATE,
+            allowNull: true,
+        },
+        genre_id: {
+            type: dataTypes.INTEGER,
             allowNull: true
         }
     };
@@ -34,6 +38,20 @@ module.exports = (sequelize, dataTypes) => {
     }
 
     const Movie = sequelize.define(alias, cols, config);
+
+    Movie.associate = function (models) {
+        Movie.belongsTo(models.Genre, {
+            as: 'genero',
+            foreignKey: 'genre_id'
+        })
+        Movie.belongsToMany(models.Actor, {
+            as: 'actores',
+            through: 'actor_movie',
+            foreignKey: 'movie_id',
+            otherKey: 'actor_id',
+            timestamps: false
+        })
+    }
 
     return Movie;
 }
