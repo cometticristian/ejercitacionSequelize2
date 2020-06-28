@@ -12,7 +12,19 @@
     <h2>Rating: <%= pelicula.rating %></h2>
     <h3>Cantidad de premios: <%= pelicula.awards %></h3>
     <h4>Duracion: <%= pelicula.length %></h4>
-    <h5>Fecha de estreno: <%= pelicula.release_date %></h5>
+    <h4>Fecha de estreno: <%= pelicula.release_date %></h4>
+    <% if (pelicula.genre) { %>
+    <h4>Genero: <a href="/movies/genre/<%= pelicula.genre.id %>"><%= pelicula.genre.name %></a></h4>
+    <% } %>
+    <h4>Actores:</h4>
+
+    <ul>
+        <% pelicula.actors.forEach((actor) => { %>
+            <li>
+               <a href="/movies/actor/<%= actor.id %>"><%= actor.first_name + ' ' + actor.last_name %></a> 
+            </li>
+        <% }) %>
+    </ul>
 
     <br>
     <br>

@@ -14,7 +14,7 @@ let moviesController = {
     },
     detail: function (req, res, next) {
         db.Movie.findByPk(req.params.id, {
-            include: [{association: 'genre'}, {association: 'actors'}]
+            include: [{ association: 'genre' }, { association: 'actors' }]
         })
             .then((pelicula) => {
                 res.render('detail', { pelicula: pelicula })
@@ -24,12 +24,24 @@ let moviesController = {
             })
     },
     create: function (req, res, next) {
-        res.render('create');
+        db.Genre.findAll()
+            .then((genres) => {
+                res.render('create', { genres });
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     },
     store: function (req, res, next) {
         let errors = validationResult(req);
         if (errors.isEmpty()) {
-            db.Movie.create(req.body)
+            db.Movie.create({
+                title: req.body.title,
+                rating: req.body.rating,
+                awards: req.body.awards,
+                length: req.body.length,
+                genre_id: req.body.genre
+            })
                 .then(() => {
                     res.redirect('list');
                 })
@@ -41,9 +53,14 @@ let moviesController = {
         }
     },
     edit: function (req, res, next) {
-        db.Movie.findByPk(req.params.id)
-            .then((pelicula) => {
-                res.render('edit', { pelicula: pelicula, id: req.params.id })
+        let pelicula = db.Movie.findByPk(req.params.id, {
+            include: [{ association: 'genre' }]
+        });
+        let genres = db.Genre.findAll();
+
+        Promise.all([pelicula, genres])
+            .then(([pelicula, genres]) => {
+                res.render('edit', { pelicula: pelicula, id: req.params.id, genres: genres })
             })
             .catch((error) => {
                 console.log(error);
@@ -56,7 +73,8 @@ let moviesController = {
                 title: req.body.title,
                 rating: req.body.rating,
                 awards: req.body.awards,
-                length: req.body.length
+                length: req.body.length,
+                genre_id: req.body.genre
             }, {
                 where: {
                     id: req.params.id
@@ -73,17 +91,56 @@ let moviesController = {
         }
     },
     destroy: function (req, res, next) {
-        db.Movie.destroy({
+
+        let favourite = db.Actor.update({
+            favorite_movie_id: 'null'
+        }, {
+            where: {
+                favorite_movie_id: req.params.id
+            }
+        });
+
+        let relation = db.Actor_movie.destroy({
+            where: {
+                movie_id: req.params.id
+            }
+        })
+
+        let movie = db.Movie.destroy({
             where: {
                 id: req.params.id
             }
         })
-        .then(() => {
-            res.redirect('/movies/list');
+
+        Promise.all([favourite, relation, movie])
+            .then(() => {
+                res.redirect('/movies/list');
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    },
+    genreDetail: function (req, res, next) {
+        db.Genre.findByPk(req.params.id, {
+            include: [{ association: 'movies' }]
         })
-        .catch((error) => {
-            console.log(error);
+            .then((genre) => {
+                res.render('genreDetail', { genre });
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    },
+    actorDetail: function (req, res, next) {
+        db.Actor.findByPk(req.params.id, {
+            include: [{ association: 'movies' }]
         })
+            .then((actor) => {
+                res.render('actorDetail', { actor });
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     }
 }
 

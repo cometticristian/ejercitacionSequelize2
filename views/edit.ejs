@@ -66,6 +66,26 @@
         <span style="color: red;font-size: 12px;"><%= buscarError('length')[0].msg %></span>
         <br>
         <br>
+        <select name="genre" id="">
+            <!-- Si la peli tiene id -->
+            <%if (pelicula.genre) {%>
+            <!-- Pongo por default un option con los valores de la peli que me llega -->
+            <option value="<%= pelicula.genre.id %>"><%= pelicula.genre.name %></option>
+            <!-- Y despues imprimo todos los generos que sean distintos al que ya puse -->
+            <% genres.forEach((genre) => { %>
+            <%if (genre.id != pelicula.genre.id) {%>
+            <option value="<%=genre.id%>"><%= genre.name %></option>
+            <% } }) %>
+            <!-- Y si la peli no tiene genero directamente imprimo todos los generos -->
+            <% } else{%>
+            <% genres.forEach((genre) => { %>
+            <option value="<%=genre.id%>"><%= genre.name %></option>
+            <%  }) %>
+            <%}%>
+            <!-- NO ENCONTRE MANERA DE PONER UN VALOR POR DEFAULT EN EL SELECT MANTENIENDO LA IMPRESION DINAMICA -->
+        </select>
+        <br>
+        <br>
 
         <button type="submit">EDITAR</button>
 

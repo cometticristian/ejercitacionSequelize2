@@ -45,4 +45,8 @@ router.put('/edit/:id', [
 
 router.delete('/delete/:id', moviesController.destroy);
 
+router.get('/genre/:id', moviesController.genreDetail);
+
+router.get('/actor/:id', moviesController.actorDetail);
+
 module.exports = router;

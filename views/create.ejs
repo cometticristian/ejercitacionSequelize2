@@ -67,6 +67,14 @@
         <br>
         <br>
 
+        <select name="genre" id="">
+            <% genres.forEach((genre) => { %>
+            <option value="<%=genre.id%>"><%= genre.name %></option>
+            <% }) %>
+        </select>
+        <br>
+        <br>
+
         <button type="submit">CREAR</button>
 
 
