@@ -49,4 +49,8 @@ router.get('/genre/:id', moviesController.genreDetail);
 
 router.get('/actor/:id', moviesController.actorDetail);
 
+router.get('/acting', moviesController.acting);
+
+router.post('/acting', moviesController.createActing);
+
 module.exports = router;

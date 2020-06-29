@@ -49,7 +49,13 @@ let moviesController = {
                     console.log(error);
                 })
         } else {
-            res.render('create', { errors: errors.errors, datos: req.body })
+            db.Genre.findAll()
+                .then((genres) => {
+                    res.render('create', { errors: errors.errors, datos: req.body, genres });
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         }
     },
     edit: function (req, res, next) {
@@ -87,7 +93,18 @@ let moviesController = {
                     console.log(error);
                 })
         } else {
-            res.render('edit', { errors: errors.errors, datos: req.body, id: req.params.id })
+            let pelicula = db.Movie.findByPk(req.params.id, {
+                include: [{ association: 'genre' }]
+            });
+            let genres = db.Genre.findAll();
+
+            Promise.all([pelicula, genres])
+                .then(([pelicula, genres]) => {
+                    res.render('edit', { datos: req.body, errors: errors.errors, pelicula: pelicula, id: req.params.id, genres: genres })
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         }
     },
     destroy: function (req, res, next) {
@@ -141,6 +158,30 @@ let moviesController = {
             .catch((error) => {
                 console.log(error);
             })
+    },
+    acting: function (req, res, next) {
+        let actors = db.Actor.findAll();
+        let movies = db.Movie.findAll();
+
+        Promise.all([actors, movies])
+        .then(([actors, movies]) => {
+            res.render('acting', {actors, movies});
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    },
+    createActing: function (req, res, next) {
+        db.Actor_movie.create({
+            actor_id: req.body.actor,
+            movie_id: req.body.movie
+        })
+        .then(() => {
+            res.redirect('/movies/list')
+        })
+        .catch((error) => {
+            console.log(error);
+        })
     }
 }
 
